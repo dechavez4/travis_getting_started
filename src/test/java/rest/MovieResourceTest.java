@@ -70,7 +70,7 @@ public class MovieResourceTest {
         EntityManager em = emf.createEntityManager();
         try {
             em.getTransaction().begin();
-            em.createNamedQuery("RenameMe.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Movie.deleteAllRows").executeUpdate();
             em.persist(new Movie(1,"More text"));
             em.persist(new Movie(2,"bbb"));
            
