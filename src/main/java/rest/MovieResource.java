@@ -77,11 +77,18 @@ public class MovieResource {
     
     
     @GET
-    @Path("/{year}")
+    @Path("year/{year}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getMovieByYear( @PathParam("year") int year){
         Movie movie = FACADE.getMovieByYear(2000);
         return Response.ok().entity(GSON.toJson(movie)).build();
+    }
+    @GET
+    @Path("/fill")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createMovie(){
+         FACADE.fill();
+        return Response.ok().entity(GSON.toJson(FACADE)).build();
     }
     
 

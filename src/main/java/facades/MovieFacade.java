@@ -13,20 +13,46 @@ import javax.persistence.TypedQuery;
  */
 public class MovieFacade {
 
-
     private static MovieFacade instance;
     private static EntityManagerFactory emf;
 
     //Private Constructor to ensure Singleton
     private MovieFacade() {
     }
-    
-    public Movie getMovieById(long id){
+
+    public void fill() {
         EntityManager em = emf.createEntityManager();
-        try{
+        try {
+            em.getTransaction().begin();
+            em.createNamedQuery("Movie.deleteAllRows").executeUpdate();
+            em.persist(new Movie(1999, "LOTR"));
+            em.persist(new Movie(2008, "The Ring"));
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+    }
+
+    //denne tilføjer film. 
+    public Movie addMovie(int year, String name) {
+        Movie movie = new Movie(year, name);
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.persist(movie);
+            em.getTransaction().commit();
+            return movie;
+        } finally {
+            em.close();
+        }
+    }
+    
+    public Movie getMovieById(long id) {
+        EntityManager em = emf.createEntityManager();
+        try {
             Movie movie = em.find(Movie.class, id);
             return movie;
-        }finally{
+        } finally {
             em.close();
         }
     }
@@ -58,25 +84,12 @@ public class MovieFacade {
         EntityManager em = emf.createEntityManager();
 
         try {
-            return (Movie)em.createQuery("SELECT m FROM Movie m WHERE m.movie LIKE :name", Movie.class).getSingleResult();
+            return (Movie) em.createQuery("SELECT m FROM Movie m WHERE m.Movie LIKE :name", Movie.class).getSingleResult();
         } finally {
             em.close();
         }
     }
 
-    //denne tilføjer film. 
-    public Movie addMovie(String name) {
-        Movie movie = new Movie(2018, "titans");
-        EntityManager em = emf.createEntityManager();
-        try {
-            em.getTransaction().begin();
-            em.persist(movie);
-            em.getTransaction().commit();
-            return movie;
-        } finally {
-            em.close();
-        }
-    }
 
     /**
      *
@@ -99,7 +112,7 @@ public class MovieFacade {
     public long getMovieCount() {
         EntityManager em = emf.createEntityManager();
         try {
-            long movie = (long) em.createQuery("SELECT COUNT(r) FROM movie r").getSingleResult();
+            long movie = (long) em.createQuery("SELECT COUNT(m) FROM Movie m").getSingleResult();
             return movie;
         } finally {
             em.close();
